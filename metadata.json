@@ -1,0 +1,10 @@
+{
+  "name": "Barbershop Rocha",
+  "description": "Aplicativo oficial da Barbershop Rocha — Além do corte. Agendamentos online, planos de assinatura Signature Club, catálogo exclusivo e gestão premium.",
+  "requestFramePermissions": [
+    "notifications"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
