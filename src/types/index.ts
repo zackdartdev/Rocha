@@ -122,6 +122,8 @@ export interface UserProfile {
   favoriteServiceIds: string[];
   activeSubscriptionId?: string;
   hasCompletedOnboarding: boolean;
+  isLoggedIn?: boolean;
+  authProvider?: 'google' | 'convidado' | 'email';
 }
 
 export interface BusinessSettings {

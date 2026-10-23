@@ -54,8 +54,14 @@ interface AppContextType {
   setWelcomeSeen: (seen: boolean) => void;
   isOnboardingOpen: boolean;
   setIsOnboardingOpen: (open: boolean) => void;
+  isExperienceLoading: boolean;
+  setIsExperienceLoading: (loading: boolean) => void;
+  replayExperienceLoading: () => void;
   
   // Actions
+  loginWithGoogle: (accountInfo?: Partial<UserProfile>) => void;
+  loginAsGuest: () => void;
+  logout: () => void;
   addAppointment: (appData: Omit<Appointment, 'id' | 'createdAt' | 'updatedAt' | 'statusHistory'>) => Appointment;
   cancelAppointment: (id: string, reason?: string) => { success: boolean; message?: string };
   updateAppointmentStatus: (id: string, status: AppointmentStatus, note?: string) => void;
@@ -130,6 +136,30 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isPwaPromptOpen, setIsPwaPromptOpen] = useState(false);
   const [isNotificationPromptOpen, setIsNotificationPromptOpen] = useState(false);
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
+
+  // Interactive experience loader state
+  const [isExperienceLoading, setIsExperienceLoading] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('skip_loader') === '1') return false;
+      return sessionStorage.getItem('rocha_experience_loaded') !== 'true';
+    }
+    return false;
+  });
+
+  const handleSetExperienceLoading = (loading: boolean) => {
+    setIsExperienceLoading(loading);
+    if (!loading && typeof window !== 'undefined') {
+      sessionStorage.setItem('rocha_experience_loaded', 'true');
+    }
+  };
+
+  const replayExperienceLoading = () => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('rocha_experience_loaded');
+    }
+    setIsExperienceLoading(true);
+  };
 
   // Entities stored in localStorage
   const [services, setServices] = useState<ServiceItem[]>(() => {
@@ -407,6 +437,40 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setUser((prev) => ({ ...prev, ...profile }));
   };
 
+  const loginWithGoogle = (accountInfo?: Partial<UserProfile>) => {
+    const updated: UserProfile = {
+      ...user,
+      id: user.id || `usr-${Date.now()}`,
+      name: accountInfo?.name || user.name || 'Stormi Lamego',
+      email: accountInfo?.email || user.email || 'stormilamego@gmail.com',
+      avatarUrl: accountInfo?.avatarUrl || user.avatarUrl,
+      isLoggedIn: true,
+      authProvider: 'google',
+    };
+    setUser(updated);
+    addNotification('Login com Google', `Conectado com sucesso como ${updated.name} (${updated.email}).`, 'sistema');
+  };
+
+  const loginAsGuest = () => {
+    const updated: UserProfile = {
+      ...user,
+      isLoggedIn: true,
+      authProvider: 'convidado',
+    };
+    setUser(updated);
+    addNotification('Acesso Convidado', 'Navegando como visitante. Você pode agendar serviços normalmente.', 'sistema');
+  };
+
+  const logout = () => {
+    const updated: UserProfile = {
+      ...user,
+      isLoggedIn: false,
+      authProvider: undefined,
+    };
+    setUser(updated);
+    addNotification('Sessão encerrada', 'Você saiu da sua conta.', 'sistema');
+  };
+
   const markNotificationRead = (id: string) => {
     setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)));
   };
@@ -459,6 +523,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setWelcomeSeen: handleSetWelcomeSeen,
         isOnboardingOpen,
         setIsOnboardingOpen,
+        isExperienceLoading,
+        setIsExperienceLoading: handleSetExperienceLoading,
+        replayExperienceLoading,
+        loginWithGoogle,
+        loginAsGuest,
+        logout,
         addAppointment,
         cancelAppointment,
         updateAppointmentStatus,

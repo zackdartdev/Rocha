@@ -185,7 +185,7 @@ export const INITIAL_PROFESSIONALS: Professional[] = [
     name: 'Guilherme Rocha',
     title: 'Proprietário & Mestre Barbeiro',
     bio: 'Mais de 10 anos dedicados à arte da barbearia clássica e contemporânea. Foco em precisão, visagismo e atendimento exclusivo.',
-    avatarUrl: '/src/assets/images/barbershop_fade_cut_1792791560603.jpg',
+    avatarUrl: '/barber-guilherme.png',
     workingDays: [1, 2, 3, 4, 5, 6], // Segunda a Sábado
     workStart: '09:00',
     workEnd: '20:00',
@@ -267,6 +267,8 @@ export const INITIAL_USER: UserProfile = {
   favoriteServiceIds: ['srv-2', 'srv-3', 'srv-13'],
   activeSubscriptionId: 'plano-2',
   hasCompletedOnboarding: true,
+  isLoggedIn: true,
+  authProvider: 'google',
 };
 
 // Seed appointments demonstrating separation of execution vs payment status

@@ -7,7 +7,8 @@ import {
   minutesToTime,
   isSlotAvailable,
   calculateFinancialSummary,
-  isServiceCoveredBySubscription
+  isServiceCoveredBySubscription,
+  getLoadingMessage
 } from './rules.js';
 import { Appointment, ExpenseItem, Professional } from '../types/index.js';
 
@@ -223,4 +224,12 @@ test('isServiceCoveredBySubscription validates plan rules and allowed days', () 
 
   const res3Tuesday = isServiceCoveredBySubscription('plano-3', 'Barba modelada', 2); // Tuesday
   assert.equal(res3Tuesday.covered, true);
+});
+
+test('getLoadingMessage returns contextual phrases along progress', () => {
+  assert.equal(getLoadingMessage(10), 'Carregando experiência...');
+  assert.equal(getLoadingMessage(35), 'Sincronizando serviços da barbearia...');
+  assert.equal(getLoadingMessage(60), 'Preparando cortes, visagismo & estilo...');
+  assert.equal(getLoadingMessage(85), 'Ajustando detalhes exclusivos Rocha...');
+  assert.equal(getLoadingMessage(98), 'Tudo pronto! Além do corte.');
 });

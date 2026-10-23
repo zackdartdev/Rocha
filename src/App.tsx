@@ -20,6 +20,7 @@ import { PlansScreen } from './components/plans/PlansScreen';
 import { FavoritesScreen } from './components/favorites/FavoritesScreen';
 import { ProfileScreen } from './components/profile/ProfileScreen';
 import { AdminDashboard } from './components/admin/AdminDashboard';
+import { ExperienceLoader } from './components/loading/ExperienceLoader';
 
 const MainAppContent: React.FC = () => {
   const { 
@@ -27,7 +28,9 @@ const MainAppContent: React.FC = () => {
     activeTab, 
     setActiveTab, 
     setIsBookingModalOpen, 
-    businessSettings 
+    businessSettings,
+    isExperienceLoading,
+    setIsExperienceLoading
   } = useApp();
 
   // Handle URL query parameters (e.g. ?action=booking or ?tab=appointments)
@@ -47,6 +50,15 @@ const MainAppContent: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[var(--bg-main)] text-[var(--text-primary)] selection:bg-[#F5C542]/30 selection:text-[#F5C542] transition-colors duration-300">
+      {/* Interactive Experience Loading Sequence */}
+      {isExperienceLoading && (
+        <ExperienceLoader
+          onComplete={() => setIsExperienceLoading(false)}
+          brandName={businessSettings.name}
+          slogan={businessSettings.slogan}
+        />
+      )}
+
       {/* Offline Status */}
       <OfflineBanner />
 

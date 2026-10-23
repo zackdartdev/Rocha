@@ -271,3 +271,25 @@ export function isServiceCoveredBySubscription(
 
   return { covered: false, reason: 'Plano não reconhecido.' };
 }
+
+export interface LoadingStep {
+  minPercent: number;
+  maxPercent: number;
+  message: string;
+}
+
+export const EXPERIENCE_LOADING_STEPS: LoadingStep[] = [
+  { minPercent: 0, maxPercent: 24, message: 'Carregando experiência...' },
+  { minPercent: 25, maxPercent: 49, message: 'Sincronizando serviços da barbearia...' },
+  { minPercent: 50, maxPercent: 74, message: 'Preparando cortes, visagismo & estilo...' },
+  { minPercent: 75, maxPercent: 94, message: 'Ajustando detalhes exclusivos Rocha...' },
+  { minPercent: 95, maxPercent: 100, message: 'Tudo pronto! Além do corte.' },
+];
+
+export function getLoadingMessage(progress: number): string {
+  const clamped = Math.max(0, Math.min(100, Math.round(progress)));
+  const step = EXPERIENCE_LOADING_STEPS.find(
+    (s) => clamped >= s.minPercent && clamped <= s.maxPercent
+  );
+  return step ? step.message : 'Carregando experiência...';
+}
